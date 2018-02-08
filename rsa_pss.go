@@ -85,7 +85,7 @@ func (m *SigningMethodRSAPSS) Verify(signingString, signature string, key interf
 	switch k := key.(type) {
 	case *rsa.PublicKey:
 		rsaKey = k
-	case crypto.Signer:
+	case cryptoSigner:
 		pub := k.Public()
 		if rsaKey, ok = pub.(*rsa.PublicKey); !ok {
 			return ErrInvalidKeyType
@@ -107,10 +107,10 @@ func (m *SigningMethodRSAPSS) Verify(signingString, signature string, key interf
 // Implements the Sign method from SigningMethod
 // For this signing method, key must be an rsa.PrivateKey struct
 func (m *SigningMethodRSAPSS) Sign(signingString string, key interface{}) (string, error) {
-	var signer crypto.Signer
+	var signer cryptoSigner
 	var ok bool
 
-	if signer, ok = key.(crypto.Signer); !ok {
+	if signer, ok = key.(cryptoSigner); !ok {
 		return "", ErrInvalidKey
 	}
 

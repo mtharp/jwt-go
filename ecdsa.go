@@ -76,7 +76,7 @@ func (m *SigningMethodECDSA) Verify(signingString, signature string, key interfa
 	switch k := key.(type) {
 	case *ecdsa.PublicKey:
 		ecdsaKey = k
-	case crypto.Signer:
+	case cryptoSigner:
 		pub := k.Public()
 		if ecdsaKey, ok = pub.(*ecdsa.PublicKey); !ok {
 			return ErrInvalidKeyType
@@ -110,11 +110,11 @@ func (m *SigningMethodECDSA) Verify(signingString, signature string, key interfa
 // Implements the Sign method from SigningMethod
 // For this signing method, key must be an ecdsa.PrivateKey struct
 func (m *SigningMethodECDSA) Sign(signingString string, key interface{}) (string, error) {
-	var signer crypto.Signer
+	var signer cryptoSigner
 	var pub *ecdsa.PublicKey
 	var ok bool
 
-	if signer, ok = key.(crypto.Signer); !ok {
+	if signer, ok = key.(cryptoSigner); !ok {
 		return "", ErrInvalidKey
 	}
 
